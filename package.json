@@ -1,23 +1,21 @@
 {
-  "name": "hello.tick-stack",
-  "version": "1.0.0",
-  "description": "Checking out the [TICK-Stack](https://www.influxdata.com/time-series-platform/), i.e.",
-  "main": "index.js",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prepare": "husky install",
+    "husky": "husky",
+    "commit": "cz",
+    "check:spell": "cspell"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/mkoertgen/hello.tick-stack.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/mkoertgen/hello.tick-stack/issues"
-  },
-  "homepage": "https://github.com/mkoertgen/hello.tick-stack#readme",
   "devDependencies": {
+    "@commitlint/cli": "^17.1.2",
+    "@commitlint/config-conventional": "^17.1.0",
+    "commitizen": "^4.2.5",
+    "conventional-changelog-cli": "^4.1.0",
+    "conventional-changelog-conventionalcommits": "^7.0.2",
+    "cspell": "^6.14.0",
     "csv2json": "^2.0.2",
-    "gitignore-to-dockerignore": "^1.0.0"
+    "cz-conventional-changelog": "^3.3.0",
+    "gitignore-to-dockerignore": "^1.0.0",
+    "husky": "^8.0.1"
   }
 }
