@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=python:3.10.7-slim-bullseye
+ARG BASE_IMAGE=python:3.11-slim
 # hadolint ignore=DL3006
 FROM ${BASE_IMAGE}
 WORKDIR /usr/src/app
