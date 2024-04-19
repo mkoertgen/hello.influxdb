@@ -1,6 +1,6 @@
 FROM azul/zulu-openjdk-alpine:17 as base
 
-FROM gradle:7.5.1-jdk17 as build
+FROM gradle:8.7.0-jdk17 as build
 WORKDIR /usr/src/app/
 COPY . .
 RUN gradle build

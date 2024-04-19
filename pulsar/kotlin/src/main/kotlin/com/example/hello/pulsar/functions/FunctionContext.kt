@@ -6,6 +6,7 @@ import org.apache.pulsar.client.api.Schema
 import org.apache.pulsar.client.api.TypedMessageBuilder
 import org.apache.pulsar.functions.api.Context
 import org.apache.pulsar.functions.api.Record
+import org.apache.pulsar.functions.api.utils.FunctionRecord
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.nio.ByteBuffer
@@ -37,33 +38,48 @@ data class FunctionContext(
     TODO("Not yet implemented")
   }
 
-  override fun putState(key: String, value: ByteBuffer) { state[key] = value }
+  override fun putState(key: String, value: ByteBuffer) {
+    state[key] = value
+  }
+
   override fun putStateAsync(key: String, value: ByteBuffer): CompletableFuture<Void> {
     putState(key, value)
     return completedFuture(null)
   }
+
   override fun getState(key: String): ByteBuffer {
     if (!state.containsKey(key)) state[key] = ByteBuffer.allocate(stateKeyCapacity)
     return state[key]!!
   }
+
   override fun getStateAsync(key: String): CompletableFuture<ByteBuffer> = completedFuture(getState(key))
-  override fun deleteState(key: String) { state.remove(key) }
+  override fun deleteState(key: String) {
+    state.remove(key)
+  }
+
   override fun deleteStateAsync(key: String): CompletableFuture<Void> {
     deleteState(key)
     return completedFuture(null)
   }
+
   override fun incrCounter(key: String, amount: Long) {
     getState(key).asLongBuffer()
       .apply { this.put(0, this.get(0) + amount) }
   }
+
   override fun incrCounterAsync(key: String, amount: Long): CompletableFuture<Void> {
     incrCounter(key, amount)
     return completedFuture(null)
   }
+
   override fun getCounter(key: String): Long = getState(key).getLong(0)
   override fun getCounterAsync(key: String): CompletableFuture<Long> = completedFuture(getCounter(key))
 
   override fun recordMetric(metricName: String, value: Double) {
+    TODO("Not yet implemented")
+  }
+
+  override fun fatal(t: Throwable?) {
     TODO("Not yet implemented")
   }
 
@@ -72,9 +88,11 @@ data class FunctionContext(
   override fun getCurrentRecord(): Record<*> {
     TODO("Not yet implemented")
   }
+
   override fun getOutputSchemaType(): String {
     TODO("Not yet implemented")
   }
+
   override fun getFunctionName(): String = functionName
   override fun getFunctionId(): String = functionName
   override fun getFunctionVersion(): String {
@@ -82,7 +100,9 @@ data class FunctionContext(
   }
 
   override fun getUserConfigMap(): Map<String, Any> = userConfig
-  override fun getUserConfigValue(key: String): Optional<Any> = userConfig[key]?.let { Optional.of(it) } ?: Optional.empty()
+  override fun getUserConfigValue(key: String): Optional<Any> =
+    userConfig[key]?.let { Optional.of(it) } ?: Optional.empty()
+
   override fun getUserConfigValueOrDefault(key: String, defaultValue: Any): Any = userConfig[key] ?: defaultValue
 
   override fun getPulsarAdmin(): PulsarAdmin {
@@ -104,6 +124,10 @@ data class FunctionContext(
   }
 
   override fun <O : Any> newConsumerBuilder(schema: Schema<O>): ConsumerBuilder<O> {
+    TODO("Not yet implemented")
+  }
+
+  override fun <X : Any?> newOutputRecordBuilder(schema: Schema<X>?): FunctionRecord.FunctionRecordBuilder<X> {
     TODO("Not yet implemented")
   }
 }

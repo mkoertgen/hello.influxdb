@@ -13,7 +13,7 @@ abstract class PulsarTest {
   companion object {
     val log: Logger = LoggerFactory.getLogger(PulsarTest::class.java)
 
-    private const val PULSAR_VERSION = "2.10.1"
+    private const val PULSAR_VERSION = "3.2.2"
     @Container
     val container: PulsarContainer = PulsarContainer(DockerImageName.parse("apachepulsar/pulsar:$PULSAR_VERSION"))
 

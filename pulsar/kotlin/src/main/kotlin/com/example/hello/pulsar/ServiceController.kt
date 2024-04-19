@@ -13,13 +13,13 @@ abstract class ServiceController<T : PulsarRunnable>(
   private val executor: ExecutorService,
   private val service: T
 ) {
-    @Get("/status")
+    @Get("/status", produces=["text/plain"])
     fun status(): String {
         return if (service.isRunning) "Running" else "Not running"
     }
 
     @Status(HttpStatus.ACCEPTED)
-    @Get("/start")
+    @Get("/start", produces=["text/plain"])
     fun start(): String {
         if (service.isRunning) throw HttpStatusException(HttpStatus.PRECONDITION_FAILED, "Already running")
         executor.submit(service)
@@ -28,7 +28,7 @@ abstract class ServiceController<T : PulsarRunnable>(
     }
 
     @Status(HttpStatus.ACCEPTED)
-    @Get("/stop")
+    @Get("/stop", produces=["text/plain"])
     fun stop(): String {
         if (!service.isRunning) throw HttpStatusException(HttpStatus.PRECONDITION_REQUIRED, "Not running")
         service.stop()
