@@ -1,5 +1,4 @@
-version: "3.7"
-
+---
 #-----------------------------------------------------------------------
 x-base: &base
   logging:
@@ -60,4 +59,3 @@ services:
   kotlin-function:
     build:
       context: ./kotlin
-

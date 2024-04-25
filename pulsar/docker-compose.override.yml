@@ -1,10 +1,9 @@
-version: "3.7"
-
 services:
   pulsar:
     # Better to use k8s (local: mionikube, kind, ...)
     # cf.: https://pulsar.apache.org/docs/en/standalone-docker/#start-pulsar-in-docker
-    image: apachepulsar/pulsar:${PULSAR_VERSION}
+    # NOTE: use "pulsar" or "pulsar-all" for builtin connectors
+    image: apachepulsar/pulsar-all:${PULSAR_VERSION}
     ports: ["6650:6650", "8080:8080"]
     volumes: ["pulsar_data:/pulsar/data"]
     command: bin/pulsar standalone
@@ -35,7 +34,23 @@ services:
     command: /dev/config/set-super-user.sh
     depends_on: ["pulsar-manager"]
 
+  elasticsearch:
+    # https://pulsar.apache.org/docs/3.2.x/io-elasticsearch-sink/#configuration
+    # https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.3
+    environment:
+      discovery.type: single-node
+    ports: ["9200:9200", "9300:9300"]
+    volumes: ["elastic_data:/usr/share/elasticsearch/data"]
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.13.3
+    ports: ["5601:5601"]
+    environment:
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+    depends_on: ["elasticsearch"]
+
 #-----------------------------------------------------------------------
 volumes:
   pulsar_data: {}
   pulsar_manager_data: {}
+  elastic_data: {}

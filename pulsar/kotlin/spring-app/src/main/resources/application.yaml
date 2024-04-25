@@ -1,0 +1,27 @@
+server:
+  port: 8081
+
+management:
+  endpoints:
+    web:
+      exposure:
+        # expose all actuator endpoints (TODO: maybe sensitive)
+        # cf. https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-endpoints.html#production-ready-health
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+    prometheus:
+      enabled: true
+
+spring:
+  application:
+    name: spring-app
+
+  pulsar: # https://docs.spring.io/spring-boot/docs/current/reference/html/messaging.html#messaging.pulsar
+    client:
+      service-url: pulsar://localhost:6650
+    admin:
+      service-url: http://localhost:8080

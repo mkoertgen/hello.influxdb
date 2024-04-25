@@ -1,0 +1,7 @@
+# standard java / kotlin formatting, cf.
+# - https://github.com/spring-projects/spring-boot/blob/master/.editorconfig
+# - https://google.github.io/styleguide/javaguide.html
+# - https://www.oracle.com/technetwork/java/javase/documentation/codeconventions-136091.html#262
+[*.{java,kt,kts}]
+indent_style = tab
+indent_size = 4
