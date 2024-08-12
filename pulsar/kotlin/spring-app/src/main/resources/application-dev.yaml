@@ -1,0 +1,27 @@
+# Profile used for local development
+# gradle bootRun --args='--spring.profiles.active=dev'
+# https://www.baeldung.com/spring-profiles
+# https://www.baeldung.com/java-gradle-bootrun-pass-jvm-options#using-command-line-arguments
+
+# Tweak here for local development when using multiple services
+#server.port: 8080
+#management.server.port: 8081
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+spring:
+  pulsar:
+    admin:
+      service-url: http://localhost:8080
+      # authentication:
+    client:
+      service-url: pulsar://localhost:6650
+    sinks: # Custom property
+      enabled: true
+

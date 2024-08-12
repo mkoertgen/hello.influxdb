@@ -1,27 +1,53 @@
-server:
-  port: 8081
-
-management:
-  endpoints:
-    web:
-      exposure:
-        # expose all actuator endpoints (TODO: maybe sensitive)
-        # cf. https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-endpoints.html#production-ready-health
-        include: "*"
-  endpoint:
-    health:
-      show-details: always
-      probes:
-        enabled: true
-    prometheus:
-      enabled: true
+stage: dev
 
 spring:
   application:
     name: spring-app
+  profiles:
+    active: ${stage}
 
-  pulsar: # https://docs.spring.io/spring-boot/docs/current/reference/html/messaging.html#messaging.pulsar
-    client:
-      service-url: pulsar://localhost:6650
+  pulsar:
+    # https://docs.spring.io/spring-boot/docs/current/reference/html/messaging.html#messaging.pulsar
+    # https://docs.spring.io/spring-boot/appendix/application-properties/index.html#appendix.application-properties.integration
     admin:
       service-url: http://localhost:8080
+      # authentication:
+    client:
+      service-url: pulsar://localhost:6650
+      # authentication:
+    #    consumer:
+    #      dead-letter-policy:
+    #        dead-letter-topic: "persistent://public/default/dead-letter-topic"
+    #        initial-subscription-name: "spring-app-subscription"
+    #        max-redeliver-count: 3
+    #    defaults:
+    #      type-mappings: "string=org.apache.pulsar.client.api.schema.StringSchema"
+    #    function:
+    #      enabled: true
+    sinks: # Custom property
+      enabled: false
+
+#---
+server:
+  port: 8081
+
+#---
+management:
+  server:
+    port: 8081
+  endpoints:
+    web:
+      exposure:
+        include: "info,health,prometheus"
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      groups:
+        liveness:
+          include: "livenessState"
+          show-details: always
+        readiness:
+          include: "readinessState"
+          show-details: always
+

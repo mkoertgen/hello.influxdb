@@ -2,17 +2,15 @@ package com.example.hello.pulsar.conditions
 
 import org.apache.pulsar.client.api.PulsarClientException
 import org.apache.pulsar.client.api.SubscriptionType
-import org.apache.pulsar.common.schema.SchemaType
 import org.slf4j.LoggerFactory
 import org.springframework.pulsar.annotation.PulsarListener
-import org.springframework.pulsar.listener.AckMode
-import org.springframework.pulsar.reactive.core.ReactivePulsarTemplate
+import org.springframework.pulsar.core.PulsarTemplate
 import org.springframework.stereotype.Component
 
 
 @Component
 class FilterTemperatureFunction(
-	private val pulsarTemplate: ReactivePulsarTemplate<Float>
+	private val pulsarTemplate: PulsarTemplate<Float>
 ) {
 	private val highTemperature: Float = 40f
 
@@ -43,7 +41,6 @@ class FilterTemperatureFunction(
 		val currTemp = condition.temperature
 		if (currTemp > highTemperature) {
 			pulsarTemplate.send(Condition.OUTPUT_TOPIC, currTemp)
-				.subscribe()
 			LOGGER.info("Sent {} to {}", currTemp, Condition.OUTPUT_TOPIC)
 		}
 	}

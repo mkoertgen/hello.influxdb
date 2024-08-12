@@ -1,11 +1,13 @@
 package com.example.hello.pulsar.conditions
 
 import org.apache.pulsar.common.io.SinkConfig
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.pulsar.function.PulsarSink
 import org.springframework.stereotype.Component
 
 @Component
+@ConditionalOnProperty(prefix = "spring.pulsar.sinks", name = ["enabled"], havingValue = "true", matchIfMissing = false)
 class ConditionSinks {
 	@Bean
 	fun conditionSink(): PulsarSink {

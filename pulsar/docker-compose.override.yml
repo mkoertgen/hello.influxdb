@@ -8,7 +8,8 @@ services:
     volumes: ["pulsar_data:/pulsar/data"]
     command: bin/pulsar standalone
 
-  pulsar-manager: # https://pulsar.apache.org/docs/en/administration-pulsar-manager/#set-administrator-account-and-password
+  pulsar-manager:
+    # https://pulsar.apache.org/docs/en/administration-pulsar-manager/#set-administrator-account-and-password
     image: apachepulsar/pulsar-manager:v0.4.0
     ports: ["9527:9527", "7750:7750"] # https://stackoverflow.com/a/71052130/2592915
     environment:
@@ -34,20 +35,68 @@ services:
     command: /dev/config/set-super-user.sh
     depends_on: ["pulsar-manager"]
 
+  #----------------------
   elasticsearch:
-    # https://pulsar.apache.org/docs/3.2.x/io-elasticsearch-sink/#configuration
-    # https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.3
+    # https://www.elastic.co/guide/en/elasticsearch/reference/current/run-elasticsearch-locally.html
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}
     environment:
-      discovery.type: single-node
-    ports: ["9200:9200", "9300:9300"]
-    volumes: ["elastic_data:/usr/share/elasticsearch/data"]
+      - ELASTIC_USERNAME=elastic
+      - ELASTIC_PASSWORD=changeme
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - xpack.security.transport.ssl.enabled=false
+      - xpack.security.http.ssl.enabled=false
+      - xpack.license.self_generated.type=trial
+      - http.cors.enabled=true
+      - http.cors.allow-origin='*'
+    ports: ["9200:9200"]
+    volumes: [elastic_data:/usr/share/elasticsearch/data]
+
   kibana:
-    image: docker.elastic.co/kibana/kibana:7.13.3
-    ports: ["5601:5601"]
+    image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION}
     environment:
-      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
-    depends_on: ["elasticsearch"]
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=changeme
+    ports: ["5601:5601"]
+    depends_on: [elasticsearch]
+
+  #----------------------
+  kafka:
+    image: docker.redpanda.com/vectorized/redpanda:v24.1.6
+    container_name: kafka
+    command:
+      - redpanda start
+      - --smp 1
+      - --overprovisioned
+      - --node-id 0
+      - --kafka-addr PLAINTEXT://0.0.0.0:29092,OUTSIDE://0.0.0.0:9092
+      - --advertise-kafka-addr PLAINTEXT://kafka:29092,OUTSIDE://localhost:9092
+      - --pandaproxy-addr 0.0.0.0:8082
+      - --advertise-pandaproxy-addr localhost:8082
+      - --set redpanda.auto_create_topics_enabled=true
+    ports:
+      - "8089:8081"
+      - "8082:8082"
+      - "9092:9092"
+      - "9644:9644"
+      - "29092:29092"
+
+  kafka-ui:
+    image: docker.redpanda.com/vectorized/console:v2.2.4
+    entrypoint: /bin/sh
+    command: -c "echo \"$$CONSOLE_CONFIG_FILE\" > /tmp/config.yml; /app/console"
+    environment:
+      CONFIG_FILEPATH: /tmp/config.yml
+      CONSOLE_CONFIG_FILE: |
+        kafka:
+          brokers: ["kafka:29092"]
+        redpanda:
+          adminApi:
+            enabled: true
+            urls: ["http://kafka:9644"]
+    ports: ["8090:8080"]
+    depends_on: [kafka]
 
 #-----------------------------------------------------------------------
 volumes:
