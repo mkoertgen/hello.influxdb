@@ -3,24 +3,16 @@ services:
     # Better to use k8s (local: mionikube, kind, ...)
     # cf.: https://pulsar.apache.org/docs/en/standalone-docker/#start-pulsar-in-docker
     # NOTE: use "pulsar" or "pulsar-all" for builtin connectors
-    image: apachepulsar/pulsar-all:${PULSAR_VERSION}
+    image: apachepulsar/pulsar:${PULSAR_VERSION}
     ports: ["6650:6650", "8080:8080"]
     volumes: ["pulsar_data:/pulsar/data"]
     command: bin/pulsar standalone
 
   pulsar-manager:
     # https://pulsar.apache.org/docs/en/administration-pulsar-manager/#set-administrator-account-and-password
-    image: apachepulsar/pulsar-manager:v0.4.0
+    image: apachepulsar/pulsar-manager:v0.3.0
     ports: ["9527:9527", "7750:7750"] # https://stackoverflow.com/a/71052130/2592915
     environment:
-      USERNAME: pulsar
-      PASSWORD: pulsar
-      PULSAR_CLUSTER: pulsar
-      DRIVER_CLASS_NAME: org.postgresql.Driver
-      LOG_LEVEL: DEBUG
-      REDIRECT_HOST: http://127.0.0.1
-      REDIRECT_PORT: 9527
-      URL: jdbc:postgresql://127.0.0.1:5432/pulsar_manager
       SPRING_CONFIGURATION_FILE: /pulsar-manager/pulsar-manager/application.properties
     volumes: ["pulsar_manager_data:/pulsar-manager/pulsar-manager/dbdata"]
 
@@ -34,6 +26,19 @@ services:
     volumes: ["./pulsar-manager/:/dev/config"]
     command: /dev/config/set-super-user.sh
     depends_on: ["pulsar-manager"]
+
+  # UI for Apache Pulsar: https://dekaf.io
+  # https://twitter.com/dekaf_io
+  # dekaf:
+  #   image: tealtools/dekaf:latest
+  #   restart: always
+  #   environment:
+  #     DEKAF_PULSAR_WEB_URL: "http://pulsar:8080"
+  #     DEKAF_PULSAR_BROKER_URL: "pulsar://pulsar:6650"
+  #     # DEKAF_LICENSE_ID: ""
+  #     # DEKAF_LICENSE_TOKEN: ""
+  #   volumes: [dekaf-library:/dekaf/data/library]
+  #   ports: [8090:8090]
 
   #----------------------
   elasticsearch:
@@ -103,3 +108,4 @@ volumes:
   pulsar_data: {}
   pulsar_manager_data: {}
   elastic_data: {}
+  dekaf-library: {}

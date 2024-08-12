@@ -7,7 +7,6 @@ import org.springframework.pulsar.function.PulsarSink
 import org.springframework.stereotype.Component
 
 @Component
-@ConditionalOnProperty(prefix = "spring.pulsar.sinks", name = ["enabled"], havingValue = "true", matchIfMissing = false)
 class ConditionSinks {
 	@Bean
 	fun conditionSink(): PulsarSink {

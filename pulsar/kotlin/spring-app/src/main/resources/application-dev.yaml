@@ -23,5 +23,5 @@ spring:
     client:
       service-url: pulsar://localhost:6650
     sinks: # Custom property
-      enabled: true
+      enabled: false # true
 

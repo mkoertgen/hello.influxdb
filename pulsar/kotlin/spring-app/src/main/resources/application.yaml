@@ -22,9 +22,7 @@ spring:
     #        max-redeliver-count: 3
     #    defaults:
     #      type-mappings: "string=org.apache.pulsar.client.api.schema.StringSchema"
-    #    function:
-    #      enabled: true
-    sinks: # Custom property
+    function:
       enabled: false
 
 #---
